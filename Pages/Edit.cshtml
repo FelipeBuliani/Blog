@@ -1,0 +1,26 @@
+﻿@page
+@model EditModel
+
+@if (Model.HttpContext.User.Identity.IsAuthenticated)
+{
+    <h2>Editar Post @Model.Id</h2>
+
+    <form method="post" id="editPostForm">
+        <div class="form-group">
+            <label>Título</label>
+            <input asp-for="Post.Title" class="form-control" id="title" />
+            <span asp-validation-for="Post.Title" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label>Conteúdo</label>
+            <textarea asp-for="Post.Content" class="form-control" id="content"></textarea>
+            <span asp-validation-for="Post.Content" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary mt-4" id="sendEdit">Salvar</button>
+        <a asp-page="/Index" class="btn btn-secondary mt-4">Voltar</a>
+    </form>
+}
+else {
+
+    <h3 class="mt-8">Usuário não autenticado, faça login para acessar essa página.</h3>
+}

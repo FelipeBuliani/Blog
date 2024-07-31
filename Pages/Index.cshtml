@@ -1,0 +1,92 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Blog";
+}
+
+<div id="notifications"></div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-center">@ViewData["Title"]</h1>
+            @if (Model.HttpContext.User.Identity.IsAuthenticated)
+            {
+                <a asp-page="/Create" class="btn btn-primary mb-4">Novo Post</a>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        @if (Model.Posts != null)
+        {
+            @foreach (var post in Model.Posts)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@post.Title</h5>
+                            <p class="card-text">@post.Content</p>
+                            <p class="card-text"><small class="text-muted">Postado em @post.CreatedAt.ToShortDateString()</small></p>
+                            <p class="card-text"><small class="text-muted">Usuário @post.UserName</small></p>
+                            @if (Model.UserIdSession == post.UserId && Model.HttpContext.User.Identity.IsAuthenticated)
+                            {
+                                <div class="d-flex">
+                                    <a asp-page="/Edit" asp-route-id="@post.Id" class="btn btn-secondary me-2">Editar</a>
+                                    <form method="post" asp-page-handler="Delete" id="deletePostForm">
+                                        <input type="hidden" name="id" value="@post.Id" />
+                                        <button type="submit" class="btn btn-danger" id="sendDelete">Excluir</button>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+    </div>
+</div>
+
+
+<script>
+    window.onload = function () 
+    {
+        let socket = new WebSocket('ws://localhost:5288/ws');
+
+        socket.onopen = function (event) {
+            console.log('Connected to WebSocket server');
+        };
+
+        socket.onmessage = function (event) {
+            let notificationsDiv = document.getElementById('notifications');
+            let notification = document.createElement('div');
+            notification.innerText = event.data;
+            notification.className = 'notification';
+            notificationsDiv.appendChild(notification);
+
+            setTimeout(() => {
+                location.reload();
+            },3000);
+            
+        };
+
+        socket.onclose = function (event) {
+            console.log('Disconnected from WebSocket server');
+        };
+
+        socket.onerror = function (error) {
+            console.error('WebSocket error:', error);
+        };
+    }
+</script>
+
+<style>
+    .notification {
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        background-color: #f9f9f9;
+    }
+</style>
+

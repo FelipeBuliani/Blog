@@ -1,0 +1,36 @@
+﻿@page
+@model Blog.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form method="post">
+    <div class="form-group">
+        <label class="control-label">Usuário</label>
+        <input asp-for="User.UserName" class="form-control" />
+        <span asp-validation-for="User.UserName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label class="control-label">Senha</label>
+        <input asp-for="User.Password" class="form-control" type="password" />
+        <span asp-validation-for="User.Password" class="text-danger"></span>
+    </div>
+    <br/>
+    <div class="form-group">
+        <input type="submit" value="Login" class="btn btn-primary mt-4" />
+        <a asp-page="/Account/Register" class="btn btn-secondary mt-4">Registrar-se</a>
+    </div>
+</form>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+<script>
+    var errorMessage = '@Html.Raw(TempData["ErrorMessage"] ?? string.Empty)';
+    if (errorMessage) {
+        alert(decodeURIComponent(errorMessage));
+    }
+</script>
